@@ -92,6 +92,25 @@
       #EAEFF6;
   }
 
+  /* Mobile: iPhone simulator scales to fit the viewport while preserving its
+     393×852 aspect ratio. transform: scale() shrinks toward the center so the
+     iPhone stays centered with letterboxing on the longer axis. */
+  @media (max-width: 500px) {
+    html, body {
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+    }
+    .stage {
+      padding: 0;
+      background: #000;
+    }
+    .stage > div {
+      transform-origin: center center;
+      transform: scale(min(calc(100vw / 393), calc(100vh / 852)));
+    }
+  }
+
   /* Hide scrollbars inside phone */
   .phone-scroll::-webkit-scrollbar { display: none; }
   .phone-scroll { scrollbar-width: none; }
