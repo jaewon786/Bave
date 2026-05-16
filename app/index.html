@@ -80,12 +80,11 @@
     display: inline-block;
   }
 
-  /* Stage centers the phone. svh = small viewport height — accounts for
-     mobile browser chrome (URL bar, bottom toolbar) so the page never
-     gets cut off behind them. Fallback to vh for older browsers. */
+  /* Stage centers the phone. Uses --vh/--vw set by JS (window.innerHeight/Width)
+     to get the actually visible viewport even on mobile browsers that include
+     URL bars / bottom toolbars in the standard 100vh calculation. */
   .stage {
-    height: 100vh;
-    height: 100svh;
+    height: var(--vh, 100vh);
     display: flex; align-items: center; justify-content: center;
     padding: 16px;
     overflow: hidden;
@@ -95,22 +94,26 @@
       #EAEFF6;
   }
 
-  /* Mobile: iPhone simulator scales to fit the visible viewport (svh excludes
-     URL bar + nav bar areas) while preserving 393×852 aspect ratio. */
+  /* Mobile: iPhone simulator scales to fit the visible viewport while
+     preserving 393×852 aspect ratio. Uses JS-measured --vh/--vw for accuracy. */
   @media (max-width: 500px) {
     html, body {
       overflow: hidden;
-      height: 100vh;
-      height: 100svh;
-      width: 100vw;
+      height: var(--vh, 100vh);
+      width: var(--vw, 100vw);
     }
     .stage {
       padding: 0;
       background: #000;
+      width: var(--vw, 100vw);
+      height: var(--vh, 100vh);
     }
     .stage > div {
       transform-origin: center center;
-      transform: scale(min(calc(100vw / 393), calc(100svh / 852)));
+      transform: scale(min(
+        calc(var(--vw, 100vw) / 393),
+        calc(var(--vh, 100vh) / 852)
+      ));
     }
   }
 
@@ -145,6 +148,23 @@
 </style>
 </head>
 <body>
+  <script>
+    // Set --vh/--vw to the actual visible viewport size. window.innerHeight
+    // excludes browser chrome (URL bar, bottom toolbar) on mobile, so the
+    // iPhone simulator scales accurately into the real visible area.
+    (function() {
+      function setVp() {
+        document.documentElement.style.setProperty('--vh', window.innerHeight + 'px');
+        document.documentElement.style.setProperty('--vw', window.innerWidth + 'px');
+      }
+      setVp();
+      window.addEventListener('resize', setVp);
+      window.addEventListener('orientationchange', setVp);
+      // Re-measure when the page is shown after browser chrome animates
+      window.addEventListener('pageshow', setVp);
+    })();
+  </script>
+
   <div id="root"></div>
 
   <script>
