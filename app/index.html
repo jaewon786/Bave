@@ -80,9 +80,12 @@
     display: inline-block;
   }
 
-  /* Stage centers the phone */
+  /* Stage centers the phone. svh = small viewport height — accounts for
+     mobile browser chrome (URL bar, bottom toolbar) so the page never
+     gets cut off behind them. Fallback to vh for older browsers. */
   .stage {
     height: 100vh;
+    height: 100svh;
     display: flex; align-items: center; justify-content: center;
     padding: 16px;
     overflow: hidden;
@@ -92,13 +95,13 @@
       #EAEFF6;
   }
 
-  /* Mobile: iPhone simulator scales to fit the viewport while preserving its
-     393×852 aspect ratio. transform: scale() shrinks toward the center so the
-     iPhone stays centered with letterboxing on the longer axis. */
+  /* Mobile: iPhone simulator scales to fit the visible viewport (svh excludes
+     URL bar + nav bar areas) while preserving 393×852 aspect ratio. */
   @media (max-width: 500px) {
     html, body {
       overflow: hidden;
       height: 100vh;
+      height: 100svh;
       width: 100vw;
     }
     .stage {
@@ -107,7 +110,7 @@
     }
     .stage > div {
       transform-origin: center center;
-      transform: scale(min(calc(100vw / 393), calc(100vh / 852)));
+      transform: scale(min(calc(100vw / 393), calc(100svh / 852)));
     }
   }
 
