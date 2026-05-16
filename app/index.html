@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bave — 부모의 마음을 돌보는 양육 기록</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+  :root {
+    /* Sky-cyan palette — Figma tokens */
+    --bave-50:  #F2FBFE;
+    --bave-100: #E2F9FE;
+    --bave-200: #BFEEFA;
+    --bave-300: #9BE8FF;
+    --bave-400: #5FD7F8;
+    --bave-500: #37CEFF;     /* primary sky cyan */
+    --bave-600: #1AB3E8;
+    --bave-700: #1593C2;
+    --bave-800: #0F6D90;
+    --bave-soft: #F8F9FB;    /* page background */
+
+    /* deep blue accent (used in Figma for links/labels) */
+    --bave-link: #4297ED;
+
+    /* neutrals — Figma */
+    --ink-900: #1F2230;
+    --ink-700: #4A5163;
+    --ink-500: #4A5163;
+    --ink-400: #9CA3B5;
+    --ink-300: #C5CAD5;
+    --ink-200: #E4E7EE;
+    --ink-100: #F1F3F7;
+    --ink-50:  #F8F9FB;
+
+    /* warm/amber tones for cards */
+    --warm-bg:     #FFF7CC;
+    --warm-bg2:    #FFFADF;
+    --warm-border: #FFEB80;
+    --warm-fg:     #F59E0B;
+    --warm-fg2:    #853A00;
+
+    /* emotion colors (soft pastels) */
+    --emo-joy:     #FFCB66;
+    --emo-calm:    #9CCAF7;
+    --emo-tired:   #B7B0E3;
+    --emo-anxious: #F6A78A;
+    --emo-sad:     #8AB2D9;
+    --emo-anger:   #ED8585;
+    --emo-grateful:#F2A8C4;
+    --emo-proud:   #76D0B0;
+
+    /* shadows */
+    --shadow-card: 0 1px 2px rgba(31, 34, 48, 0.04), 0 8px 24px rgba(31, 34, 48, 0.06);
+    --shadow-soft: 0px 2px 4px rgba(31, 34, 48, 0.06);
+    --shadow-pop:  0px 4px 8px rgba(17, 20, 28, 0.12), 0px 24px 32px rgba(17, 20, 28, 0.28);
+    --shadow-cta:  0px 4px 8px rgba(66, 151, 237, 0.24);
+  }
+
+  * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui,
+                 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', 'EmojiOne Color', sans-serif;
+    background: #E9EEF5;
+    color: var(--ink-900);
+    overflow: hidden;            /* prevent stage from causing page scroll */
+    height: 100vh;
+  }
+
+  /* Twemoji — Apple-style emoji rendered as SVG for cross-platform consistency.
+     On Mac/iOS native Apple Color Emoji already matches Figma; on Windows/Android
+     Twemoji replaces native OS emoji with Apple-style SVGs at runtime. */
+  img.emoji {
+    height: 1em; width: 1em;
+    margin: 0 .05em 0 .1em;
+    vertical-align: -0.1em;
+    display: inline-block;
+  }
+
+  /* Stage centers the phone */
+  .stage {
+    height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 16px;
+    overflow: hidden;
+    background:
+      radial-gradient(1200px 600px at 50% -100px, #DDEAF8 0%, transparent 60%),
+      radial-gradient(800px 400px at 100% 100%, #E8E0F2 0%, transparent 60%),
+      #EAEFF6;
+  }
+
+  /* Hide scrollbars inside phone */
+  .phone-scroll::-webkit-scrollbar { display: none; }
+  .phone-scroll { scrollbar-width: none; }
+
+  /* Allow smooth transitions */
+  .fade-in { animation: fadeIn 240ms cubic-bezier(.2,.7,.2,1); }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .slide-up { animation: slideUp 280ms cubic-bezier(.2,.7,.2,1); }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .pop { animation: pop 220ms cubic-bezier(.2,.7,.2,1); }
+  @keyframes pop {
+    from { opacity: 0; transform: scale(.94); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  button { font-family: inherit; cursor: pointer; }
+  input, textarea { font-family: inherit; }
+
+  /* No-tap-highlight */
+  * { -webkit-tap-highlight-color: transparent; }
+</style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script>
+    /* Tweakable defaults — host rewrites this block on persist */
+    window.__BAVE_DEFAULTS = /*EDITMODE-BEGIN*/{
+      "primary": "#37CEFF",
+      "showOnboarding": false,
+      "density": "comfortable"
+    }/*EDITMODE-END*/;
+  </script>
+
+  <!-- Apple Color Emoji rendering — self-contained, no external library.
+       Walks text nodes inside #root, replaces emoji characters with <img>
+       sourced from emoji-datasource-apple so 🍚 etc. match Figma exactly. -->
+  <script>
+    (function() {
+      const APPLE_BASE = 'https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.1.2/img/apple/64/';
+      // Match: extended pictographic + optional ZWJ-joined sequence + optional VS-16
+      const EMOJI_RE = /\p{Extended_Pictographic}(?:‍\p{Extended_Pictographic}️?)*️?/gu;
+      const HAS_EMOJI = /\p{Extended_Pictographic}/u;
+
+      function toCodepoint(emoji) {
+        // Preserve FE0F (variation selector) — emoji-datasource-apple files use
+        // qualified form (e.g. 1f321-fe0f.png), so stripping FE0F gives 404s.
+        const cps = [];
+        for (const c of emoji) {
+          cps.push(c.codePointAt(0).toString(16));
+        }
+        return cps.join('-');
+      }
+
+      function processTextNode(textNode) {
+        const text = textNode.nodeValue;
+        if (!HAS_EMOJI.test(text)) return;
+        const matches = [...text.matchAll(EMOJI_RE)];
+        if (matches.length === 0) return;
+        const parent = textNode.parentNode;
+        if (!parent) return;
+        let lastEnd = 0;
+        for (const m of matches) {
+          if (m.index > lastEnd) {
+            parent.insertBefore(document.createTextNode(text.slice(lastEnd, m.index)), textNode);
+          }
+          const cp = toCodepoint(m[0]);
+          const img = document.createElement('img');
+          img.src = APPLE_BASE + cp + '.png';
+          img.alt = m[0];
+          img.className = 'emoji';
+          img.draggable = false;
+          // Fallback: some emojis (e.g. 🌡 1f321) are only stored in qualified
+          // form (with -fe0f) by emoji-datasource-apple. Try the qualified
+          // variant if the bare codepoint 404s.
+          if (!cp.includes('-fe0f')) {
+            img.onerror = function() {
+              this.onerror = null;
+              this.src = APPLE_BASE + cp + '-fe0f.png';
+            };
+          }
+          parent.insertBefore(img, textNode);
+          lastEnd = m.index + m[0].length;
+        }
+        if (lastEnd < text.length) {
+          parent.insertBefore(document.createTextNode(text.slice(lastEnd)), textNode);
+        }
+        parent.removeChild(textNode);
+      }
+
+      function parseRoot() {
+        const root = document.getElementById('root') || document.body;
+        if (!root) return;
+        const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+          acceptNode(node) {
+            const p = node.parentElement;
+            if (!p) return NodeFilter.FILTER_REJECT;
+            const tag = p.tagName;
+            if (tag === 'SCRIPT' || tag === 'STYLE' || tag === 'TEXTAREA' || tag === 'INPUT')
+              return NodeFilter.FILTER_REJECT;
+            if (p.classList && p.classList.contains('emoji')) return NodeFilter.FILTER_REJECT;
+            return HAS_EMOJI.test(node.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+          },
+        });
+        const nodes = [];
+        let n;
+        while ((n = walker.nextNode())) nodes.push(n);
+        nodes.forEach(processTextNode);
+      }
+
+      // MutationObserver — reactively parses emojis the moment React inserts
+      // new DOM (popup mount, screen change). Microtask-scheduled so the parse
+      // typically lands before the browser repaints → no flicker between
+      // native-font emoji and Apple PNG.
+      let scheduled = false;
+      function safeParse() {
+        try { parseRoot(); } catch (e) { /* noop */ }
+      }
+      function schedule() {
+        if (scheduled) return;
+        scheduled = true;
+        Promise.resolve().then(() => {
+          scheduled = false;
+          safeParse();
+        });
+      }
+      function start() {
+        safeParse();
+        new MutationObserver((mutations) => {
+          // Ignore mutations that only inserted our own emoji <img> elements
+          let hasReal = false;
+          outer: for (const m of mutations) {
+            if (m.type === 'characterData') { hasReal = true; break; }
+            for (const n of m.addedNodes) {
+              if (n.nodeType !== 1 || !n.classList ||
+                  !n.classList.contains('emoji')) {
+                hasReal = true; break outer;
+              }
+            }
+          }
+          if (hasReal) schedule();
+        }).observe(document.body, {
+          childList: true, subtree: true, characterData: true,
+        });
+        // Backup heartbeat in case any edge case escapes the observer
+        setInterval(safeParse, 1500);
+      }
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', start);
+      } else {
+        start();
+      }
+    })();
+  </script>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <script type="text/babel" src="ios-frame.jsx"></script>
+  <script type="text/babel" src="tweaks-panel.jsx"></script>
+  <script type="text/babel" src="bave-icons.jsx"></script>
+  <script type="text/babel" src="bave-screens.jsx"></script>
+  <script type="text/babel" src="bave-screens-2.jsx"></script>
+  <script type="text/babel" src="bave-screens-3.jsx"></script>
+  <script type="text/babel" src="bave-app.jsx"></script>
+</body>
+</html>

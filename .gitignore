@@ -1,0 +1,23 @@
+# OS / Editor
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# Large source design assets (kept locally only)
+bave.pdf
+design/
+
+# Temp / generated reference files
+app/uploads/
+app/assets/_*.png
+app/assets/_*.jpg
+
+# Build output (none for now — prototype runs from source)
+node_modules/
+dist/
+build/
+
+# Vercel
+.vercel/
