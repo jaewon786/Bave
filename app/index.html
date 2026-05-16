@@ -95,7 +95,8 @@
   }
 
   /* Mobile: iPhone simulator scales to fit the visible viewport while
-     preserving 393×852 aspect ratio. Uses JS-measured --vh/--vw for accuracy. */
+     preserving 393×852 aspect ratio. Scale value is a unitless number set
+     by JS (see <script> above) so transform: scale() works correctly. */
   @media (max-width: 500px) {
     html, body {
       overflow: hidden;
@@ -110,10 +111,7 @@
     }
     .stage > div {
       transform-origin: center center;
-      transform: scale(min(
-        calc(var(--vw, 100vw) / 393),
-        calc(var(--vh, 100vh) / 852)
-      ));
+      transform: scale(var(--phone-scale, 1));
     }
   }
 
@@ -149,18 +147,23 @@
 </head>
 <body>
   <script>
-    // Set --vh/--vw to the actual visible viewport size. window.innerHeight
-    // excludes browser chrome (URL bar, bottom toolbar) on mobile, so the
-    // iPhone simulator scales accurately into the real visible area.
+    // Compute viewport size + iPhone scale in JS and expose them as CSS
+    // variables. CSS calc(100vw / 393) returns a length (px), not a number,
+    // which makes transform: scale(...) invalid — so we compute the unitless
+    // scale value here and set it directly.
     (function() {
       function setVp() {
-        document.documentElement.style.setProperty('--vh', window.innerHeight + 'px');
-        document.documentElement.style.setProperty('--vw', window.innerWidth + 'px');
+        const vh = window.innerHeight;
+        const vw = window.innerWidth;
+        document.documentElement.style.setProperty('--vh', vh + 'px');
+        document.documentElement.style.setProperty('--vw', vw + 'px');
+        // iPhone simulator is 393×852. Fit it inside viewport, cap at 1.
+        const scale = Math.min(vw / 393, vh / 852, 1);
+        document.documentElement.style.setProperty('--phone-scale', scale);
       }
       setVp();
       window.addEventListener('resize', setVp);
       window.addEventListener('orientationchange', setVp);
-      // Re-measure when the page is shown after browser chrome animates
       window.addEventListener('pageshow', setVp);
     })();
   </script>
