@@ -841,12 +841,12 @@ function BurnoutModal({ onClose, onStartCare }) {
         </p>
 
         {/* Primary CTA — 56h cyan rounded-16, Figma gap=32 from body.
-            Click is disabled per design — button is purely visual. */}
-        <button disabled style={{
+            Click is a no-op per design, but cursor stays as pointer. */}
+        <button onClick={(e) => e.preventDefault()} style={{
           width: '100%', marginTop: 32,
           height: 56, borderRadius: 16, border: 0,
           background: 'var(--bave-500)', color: '#fff',
-          fontSize: 16, fontWeight: 600, cursor: 'default',
+          fontSize: 16, fontWeight: 600, cursor: 'pointer',
           letterSpacing: '-0.32px', fontFamily: 'inherit',
         }}>
           🌬 5분 호흡 가이드 시작
