@@ -133,10 +133,11 @@ function BaveApp() {
               </div>
             )}
             {overlay === 'burnout' && (
-              <BurnoutModal onClose={() => setOverlay(null)} onStartCare={() => setOverlay('care')}/>
-            )}
-            {overlay === 'care' && (
-              <CareSheet onClose={() => { setOverlay(null); setBurnout(Math.max(20, burnout - 28)); pushToast('번아웃 지수가 회복됐어요'); }}/>
+              <BurnoutModal onClose={() => setOverlay(null)} onStartCare={() => {
+                setOverlay(null);
+                setBurnout(Math.max(20, burnout - 28));
+                pushToast('번아웃 지수가 회복됐어요');
+              }}/>
             )}
             {overlay === 'quickActions' && (
               <QuickActionsSheet
