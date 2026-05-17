@@ -366,10 +366,11 @@ function HomeScreen({ go, recentEntries, burnout, openBurnoutModal, onQuickRecor
     <div className="phone-scroll" style={{ height: '100%', overflow: 'auto', paddingBottom: 110, background: 'var(--bave-soft)' }}>
       {/* iOS status bar spacer — same white bg as nav bar (Figma's status bar
           area is on white background, not the page's #F8F9FB).
-          Wrapper has z-index 50 so the Bave nav bar stays visible above the
-          burnout popup overlay (z=40), matching Figma's layer ordering. */}
+          Wrapper is sticky so the status bar + Bave nav bar stay fixed at
+          the top while the body scrolls underneath. z-index 50 keeps it
+          above the burnout popup overlay (z=40). */}
       <div style={{
-        position: 'relative', zIndex: 50, background: '#fff',
+        position: 'sticky', top: 0, zIndex: 50, background: '#fff',
       }}>
         <div style={{ height: 47 }}/>
         {/* Header — Bave wordmark + actions, white bar 56h */}
