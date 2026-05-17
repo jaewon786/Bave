@@ -840,12 +840,13 @@ function BurnoutModal({ onClose, onStartCare }) {
           최근 기록을 보니 좀 지쳐 보이세요.<br/>따뜻한 말 한 마디 드릴게요.
         </p>
 
-        {/* Primary CTA — 56h cyan rounded-16, Figma gap=32 from body */}
-        <button onClick={onStartCare} style={{
+        {/* Primary CTA — 56h cyan rounded-16, Figma gap=32 from body.
+            Click is disabled per design — button is purely visual. */}
+        <button disabled style={{
           width: '100%', marginTop: 32,
           height: 56, borderRadius: 16, border: 0,
           background: 'var(--bave-500)', color: '#fff',
-          fontSize: 16, fontWeight: 600, cursor: 'pointer',
+          fontSize: 16, fontWeight: 600, cursor: 'default',
           letterSpacing: '-0.32px', fontFamily: 'inherit',
         }}>
           🌬 5분 호흡 가이드 시작
